@@ -1,0 +1,263 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[romanian]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{fancyhdr}
+
+% Configurare culori pentru cod Java
+\definecolor{codegreen}{rgb}{0,0.4,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.98,0.98,0.95}
+
+\lstset{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{blue}\bfseries,
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle={\small\ttfamily},
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=4,
+	language=Java,
+	frame=single
+}
+
+\begin{document}
+	
+	% --- PAGINA DE TITLU ---
+	\begin{titlepage}
+		\centering
+		{\large \textbf{UNIVERSITATEA TRANSILVANIA BRAȘOV} \par}
+		{\large \textbf{FACULTATEA DE MATEMATICĂ ȘI INFORMATICĂ} \par}
+		\vspace{4cm}
+		{\Huge \textbf{PROIECT DE SEMESTRU}} \par
+		\vspace{1cm}
+		{\Large \textbf{MEDII ȘI INSTRUMENTE DE PROGRAMARE}} \par
+		\vspace{2.5cm}
+		{\Huge \textbf{Sistem Software de Simulare Backgammon}} \par
+		{\Large \textit{Arhitectură Java Swing și Managementul Stărilor de Joc}} \par
+		\vspace{4cm}
+		\begin{minipage}{0.4\textwidth}
+			\begin{flushleft} \large
+				\textbf{STUDENT:}\\
+				GRĂMADĂ ADRIAN-GHEORGHIȚĂ
+			\end{flushleft}
+		\end{minipage}
+		~
+		\begin{minipage}{0.4\textwidth}
+			\begin{flushright} \large
+				\textbf{PROFESOR:}\\
+				BOCU RĂZVAN
+			\end{flushright}
+		\end{minipage}
+		\vfill
+		{\large 2026 \par}
+	\end{titlepage}
+	
+	\tableofcontents
+	
+	% --- CAPITOLUL 1 ---
+	\chapter{Introducere și Analiza Domeniului}
+	\section{Motivarea alegerii temei}
+	Backgammon-ul reprezintă unul dintre cele mai vechi jocuri din lume, a cărui complexitate derivă din echilibrul dintre probabilitatea matematică și decizia strategică. Alegerea acestui proiect pentru disciplina "Medii și Instrumente de Programare" se fundamentează pe necesitatea aplicării unor concepte avansate de Programare Orientată pe Obiect (POO) într-un context interactiv și dinamic. 
+	
+	Aplicația demonstrează modul în care un set de reguli abstracte poate fi transpus într-un sistem digital robust, capabil să gestioneze stări complexe și interacțiuni în timp real.
+	
+	\section{Istoric și Reguli Fundamentale}
+	Sistemul implementat respectă normele internaționale de Backgammon:
+	\begin{itemize}
+		\item \textbf{Tabla de joc:} Compusă din 24 de puncte (triunghiuri înguste) organizate în patru cadrane.
+		\item \textbf{Zarurile:} Determinantul numărului de spații pe care o piesă le poate parcurge.
+		\item \textbf{Logica de "Hitting":} O piesă singură pe un punct poate fi lovită și trimisă pe bară.
+	\end{itemize}
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.9\textwidth]{Screenshot 2026-01-29 202543.png}
+		\caption{Configurația inițială a tablei de joc.}
+	\end{figure}
+	Figura de mai sus ilustrează starea inițială a tablei de joc, implementată conform așezării standard din Backgammon. Punctele sunt reprezentate grafic prin triunghiuri alternante cromatic, iar piesele sunt grupate strategic: de exemplu, Albul (piesele deschise) are 5 piese pe punctul 6 (index 5) și 2 piese pe punctul 24 (index 23), în timp ce Negrul (piesele închise) are o distribuție simetrică. Central, se observă axa de simetrie a tablei, care separă cadranul interior de cel exterior.
+	
+	% --- CAPITOLUL 2 ---
+	\chapter{Arhitectura Sistemului Software}
+	\section{Paradigma Model-View-Controller (MVC)}
+	Structura claselor reflectă separarea responsabilităților:
+	\begin{itemize}
+		\item \textbf{Modelul:} Clasele \texttt{Board}, \texttt{Point} și \texttt{Dice} stochează datele.
+		\item \textbf{Vizualizarea:} \texttt{BackgammonUI} gestionează randarea grafică.
+		\item \textbf{Controlerul:} Clasa \texttt{Game} orchestrează interacțiunea.
+	\end{itemize}
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.6\textwidth]{Screenshot 2026-01-29 202552.png}
+		\caption{Panoul lateral pentru gestiunea pieselor de pe bară și a celor scoase.}
+	\end{figure}
+	Acest detaliu din interfață (Figura 2.2) prezintă panoul lateral responsabil pentru starea globală a pieselor. Acesta afișează în timp real numărul de piese aflate pe bară (cele lovite) și numărul de piese scoase de pe tablă (born off) pentru fiecare jucător. Butonul „Select Bar” permite jucătorului să își selecteze piesele lovite pentru a reintra în joc, iar „Bear Off” este utilizat în faza finală pentru a elimina piesele din casă.
+	
+	\section{Gestiunea Stărilor (State Management)}
+	Sistemul monitorizează în permanență starea curentă a jocului. Bara de control superioară afișează jucătorul curent și starea zarurilor.
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.8\textwidth]{Screenshot 2026-01-29 202601.png}
+		\caption{Interfața de control superioară cu zarurile afișate grafic.}
+	\end{figure}
+	În Figura 2.3 se observă modul în care este comunicată starea curentă a rundei. Jucătorul activ este indicat textual („Player: White”), iar valorile zarurilor sunt randate grafic sub forma unor cuburi clasice. Zarurile gri indică faptul că acestea au fost deja utilizate sau nu au fost încă aruncate, în timp ce zarurile complet vizibile indică mutările disponibile.
+	
+	% --- CAPITOLUL 3 ---
+	\chapter{Implementarea Componentelor Logice}
+	\section{Logica Tablei și a Punctelor}
+	Fiecare punct este o instanță a clasei \texttt{Point}. Metoda \texttt{add} asigură că nu se pot amesteca piese de culori diferite pe același punct, cu excepția situației de "hit".
+	
+	\section{Algoritmul de Calcul al Mutărilor}
+	Calculul indexului de destinație este influențat de setarea \texttt{whiteMovesIncreasing}.
+	\begin{equation}
+		toIndex = \begin{cases} fromIndex + die, & \text{player = 1} \\ fromIndex - die, & \text{player = -1} \end{cases}
+	\end{equation}
+	
+	\section{Logica Barei (Bar)}
+	Piesele lovite sunt trimise pe bară și blochează orice altă mutare a jucătorului până când acestea reintră în joc.
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.9\textwidth]{Screenshot 2026-01-29 202631.png}
+		\caption{Vizualizarea unei piese albe aflată pe bară.}
+	\end{figure}
+	Figura 3.1 demonstrează situația în care o piesă Albă a fost lovită și se află în zona centrală (Bar). În acest stat, logica aplicației restricționează selectarea oricărei alte piese de pe tablă, forțând jucătorul să folosească butonul „Select Bar” pentru a încerca reintrarea în casa adversarului folosind zarurile disponibile.
+	
+	% --- CAPITOLUL 4 ---
+	\chapter{Proiectarea Interfeței cu Utilizatorul}
+	\section{Randarea Custom cu Graphics2D}
+	\texttt{BoardCanvas} desenează triunghiurile folosind obiecte de tip \texttt{Polygon}. Această abordare permite redimensionarea tablei fără pierderea calității vizuale.
+	
+	\section{Interacțiunea prin MouseListener}
+	La selectarea unei piese, aplicația marchează destinațiile legale cu puncte verzi.
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.9\textwidth]{Screenshot 2026-01-29 202611.png}
+		\caption{Evidențierea mutărilor posibile (puncte verzi) după selectarea unei piese.}
+	\end{figure}
+	În Figura 4.1 este prezentat sistemul de feedback vizual pentru utilizator. La selectarea unei piese albe (evidențiată printr-un contur roșu în jurul triunghiului sursă), motorul de joc calculează automat toate pozițiile de destinație permise pe baza zarurilor curente. Acestea sunt marcate cu buline verzi în interiorul triunghiurilor țintă, simplificând decizia jucătorului și prevenind mutările invalide.
+	
+	\chapter{Manual de Utilizare și Feedback}
+	\section{Efectuarea unei mutări}
+	Utilizatorul trebuie să apese pe \textbf{"Roll"} pentru a activa runda.
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.8\textwidth]{Screenshot 2026-01-29 202556.png}
+		\caption{Starea interfeței înainte de aruncarea zarurilor.}
+	\end{figure}
+	Imaginea de mai sus (Figura 5.1) prezintă starea de așteptare a sistemului. Butonul „Roll” este activat, în timp ce „End Turn” este dezactivat, forțând ordinea logică a jocului. Utilizatorul poate observa cine urmează să mute, dar nu poate interacționa cu piesele de pe tablă până când zarurile nu generează valorile de mișcare.
+	
+	\section{Finalul jocului}
+	Când un jucător scoate toate cele 15 piese, sistemul afișează un dialog de confirmare și blochează mutările ulterioare.
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=0.7\textwidth]{Screenshot 2026-01-29 203200.png}
+		\caption{Mesaj de confirmare a victoriei jucătorului alb.}
+	\end{figure}
+	Figura 5.2 surprinde momentul finalizării unei partide. Un dialog de tip JOptionPane informează jucătorii despre rezultat („White wins!”). În acest punct, logica de joc trece în starea „gameOver”, dezactivând butoanele de acțiune pentru a marca sfârșitul sesiunii curente.
+	
+	% --- CAPITOLUL 6 ---
+	\chapter{Bibliografie și Resurse}
+	\begin{enumerate}[label={[\arabic*]}]
+		\item \textbf{Oracle Java SE 25 Documentation}: \url{https://docs.oracle.com/en/java/javase/25/}
+		\item \textbf{Java Swing API Reference}: \url{https://docs.oracle.com/javase/8/docs/api/javax/swing/package-summary.html}
+		\item \textbf{Tesauro, G. - TD-Gammon Research}: \url{https://bkgm.com/articles/tesauro/tdgammon.html}
+		\item \textbf{USBGF - Official Backgammon Rules}: \url{https://usbgf.org/learn-backgammon/rules-of-backgammon/}
+		\item \textbf{Maven Project Documentation}: \url{https://maven.apache.org/guides/index.html}
+		\item \textbf{GeeksforGeeks - Game Theory}: \url{https://www.geeksforgeeks.org/minimax-algorithm-in-game-theory-set-1-introduction/}
+	\end{enumerate}
+	
+	% --- CAPITOLUL 7 ---
+	\chapter{Analiza Codului Sursă}
+	În acest capitol sunt analizate componentele software critice care asigură funcționarea sistemului Backgammon.
+	
+	\section{Gestiunea Punctelor Individuale}
+	Clasa \texttt{Point.java} este responsabilă pentru încapsularea stării unui singur triunghi de pe tablă. Aceasta reține proprietarul curent și numărul de piese.
+	\begin{lstlisting}[caption=Metoda de adăugare a pieselor în clasa Point]
+		public void add(int owner) {
+			if (count == 0) {
+				this.owner = owner;
+				this.count = 1;
+			} else if (this.owner == owner) {
+				this.count++;
+			}
+		}
+	\end{lstlisting}
+	Logica de mai sus previne adăugarea directă a unei piese peste una adversă fără a trece prin logica de „hit” din clasa \texttt{Board}.
+	
+	\section{Logica Centrală a Tablei}
+	Clasa \texttt{Board.java} implementează regulile de bază ale jocului. Metoda \texttt{isMoveLegal} verifică validitatea unei mutări înainte ca aceasta să fie executată.
+	\begin{lstlisting}[caption=Verificarea condiției pentru scoaterea pieselor]
+		public boolean allInHome(int player) {
+			int inHome = 0;
+			if ((player == 1) == whiteMovesIncreasing) {
+				for (int i = 18; i <= 23; i++) 
+				if (points[i].owner == player) inHome += points[i].count;
+			} else {
+				for (int i = 0; i <= 5; i++) 
+				if (points[i].owner == player) inHome += points[i].count;
+			}
+			int bornOff = (player == 1) ? whiteBornOff : blackBornOff;
+			int bar = (player == 1) ? whiteBar : blackBar;
+			return (inHome + bornOff) == 15 && bar == 0;
+		}
+	\end{lstlisting}
+	Această funcție este crucială deoarece condiționează faza de final („bearing off”), asigurându-se că toate cele 15 piese ale jucătorului sunt în zona casei și că nicio piesă nu a rămas blocată pe bară.
+	
+	\section{Controlul Fluxului de Joc}
+	Clasa \texttt{Game.java} acționează ca un mediator. Ea calculează destinațiile legale pentru o selecție dată, combinând logica tablei cu zarurile disponibile.
+	\begin{lstlisting}[caption=Calculul destinațiilor legale]
+		public List<Integer> getLegalDestinations(int fromIndex) {
+			List<Integer> res = new ArrayList<>();
+			if (!dice.hasMoves()) return res;
+			for (int d : dice.getRemaining()) {
+				int toIndex = board.getToIndex(currentPlayer, fromIndex, d);
+				if (board.isMoveLegal(currentPlayer, fromIndex, d)) {
+					res.add(toIndex < 0 || toIndex > 23 ? -2 : toIndex);
+				}
+			}
+			return res;
+		}
+	\end{lstlisting}
+	Această metodă permite interfeței grafice să randeze bulinele verzi menționate anterior, oferind o experiență de utilizare fluidă și corectă.
+	
+	\section{Interfața Grafică și Maparea Coordonatelor}
+	Clasa \texttt{BackgammonUI.java} conține logica de randare. Un aspect tehnic important este maparea indexului logic al punctului la ordinea vizuală, care se poate schimba prin funcția „Flip Board”.
+	\begin{lstlisting}[caption=Inversarea vizuală a indexării]
+		private int areaIndexToGameIndex(int areaIndex) {
+			if (!flip) {
+				if (areaIndex < 12) return 23 - areaIndex; 
+				return areaIndex - 12; 
+			} else {
+				if (areaIndex < 12) return 12 + areaIndex; 
+				return 11 - (areaIndex - 12); 
+			}
+		}
+	\end{lstlisting}
+	
+	
+\end{document}

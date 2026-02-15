@@ -1,0 +1,23 @@
+\babel@toc {romanian}{}\relax 
+\contentsline {chapter}{\numberline {1}Introducere și Analiza Domeniului}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Motivarea alegerii temei}{2}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Istoric și Reguli Fundamentale}{2}{section.1.2}%
+\contentsline {chapter}{\numberline {2}Arhitectura Sistemului Software}{4}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Paradigma Model-View-Controller (MVC)}{4}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Gestiunea Stărilor (State Management)}{5}{section.2.2}%
+\contentsline {chapter}{\numberline {3}Implementarea Componentelor Logice}{6}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Logica Tablei și a Punctelor}{6}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Algoritmul de Calcul al Mutărilor}{6}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Logica Barei (Bar)}{6}{section.3.3}%
+\contentsline {chapter}{\numberline {4}Proiectarea Interfeței cu Utilizatorul}{8}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Randarea Custom cu Graphics2D}{8}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Interacțiunea prin MouseListener}{8}{section.4.2}%
+\contentsline {chapter}{\numberline {5}Manual de Utilizare și Feedback}{10}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Efectuarea unei mutări}{10}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Finalul jocului}{10}{section.5.2}%
+\contentsline {chapter}{\numberline {6}Bibliografie și Resurse}{12}{chapter.6}%
+\contentsline {chapter}{\numberline {7}Analiza Codului Sursă}{13}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Gestiunea Punctelor Individuale}{13}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Logica Centrală a Tablei}{13}{section.7.2}%
+\contentsline {section}{\numberline {7.3}Controlul Fluxului de Joc}{14}{section.7.3}%
+\contentsline {section}{\numberline {7.4}Interfața Grafică și Maparea Coordonatelor}{14}{section.7.4}%
